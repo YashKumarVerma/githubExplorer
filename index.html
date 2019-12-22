@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Github Explorer</title>
+    <link rel="stylesheet" href="assets/css/material.css">
+    <link rel="stylesheet" href="assets//css/animate.css">
+    <style>
+        .cards-container {
+        column-break-inside: avoid;
+        }
+        .cards-container .card {
+        display: inline-block;
+        overflow: visible;
+        }
+
+        @media only screen and (max-width: 600px) {
+        .cards-container {
+            -webkit-column-count: 1;
+            -moz-column-count: 1;
+            column-count: 1;
+        }
+        }
+        @media only screen and (min-width: 601px) {
+        .cards-container {
+            -webkit-column-count: 2;
+            -moz-column-count: 2;
+            column-count: 2;
+        }
+        }
+        @media only screen and (min-width: 993px) {
+        .cards-container {
+            -webkit-column-count: 4;
+            -moz-column-count: 4;
+            column-count: 4;
+        }
+        }
+        .text-center {
+        text-align: center;
+        }
+</style>
+</head>
+<body>
+
+
+<nav>
+    <div class="nav-wrapper">
+        <a id="_headerName" class="brand-logo center">Github Explorer</a>
+        <ul id="nav-mobile" class="left hide-on-med-and-down">
+        </ul>
+    </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="col s12 m12">
+            
+        <table class="striped">
+          <br>
+            <tbody>
+                <tr><td>Name</td><td id="_name"></td></tr>
+                <tr><td>Bio</td><td id="_bio"></td></tr>
+                <tr><td>Followers</td><td id="_followers"></td></tr>
+                <tr><td>Following</td><td id="_following"></td></tr>
+                <tr><td>Total Repositories</td><td id="_repoCount"></td></tr>
+            </tbody>
+          </table>
+            <hr>
+          <h3>User Repositories</h3>     
+        </div>
+    </div>
+</div>
+<div id="repoList" class="cards-container"></div>
+
+</body>
+<script src="./assets/js/jquery.js"></script>
+<script src="./assets/js/material.js"></script>
+<script>
+    $(document).ready(()=>{
+
+        var username = prompt("Enter your github username : ");
+        if(!username){
+            alert("Aise kaise chalega didi ?");
+            username = "yashkumarverma";
+        }
+
+        // make request to github api
+        $.ajax({
+            url:"https://api.github.com/users/"+username,
+            success:(res)=>{
+                $("#_headerName").html(res.name);
+                $("#_name").html(res.name);
+                $("#_bio").html(res.bio);
+                $("#_followers").html(res.followers);
+                $("#_following").html(res.following);
+                $("#_repoCount").html(res.public_repos);
+                console.log(res);
+            }
+        });
+
+        // show repositories
+        $.ajax({
+            url:"https://api.github.com/users/"+username+"/repos",
+            success:(res)=>{
+                console.log(res);
+                var counter = 1;
+                var rowStart = 0;
+                res.forEach((x)=>{
+                    if(x.description==null){
+                        x.description = "Eh ! Read the code to know more. Bio Not Possible";
+                    }
+                    var str = "";
+                    // str += '<div classs="row">';
+                    
+                        str += '<div class="col s12 ';
+                    str += ['m3','m3'][Math.floor(Math.random()*10)%2];
+                    str += '">';
+                    str += '<div class="card"><div class="card-image"><img src="'+'https://cataas.com/cat/says/I worked on '+x.name+'">';
+                    str += '</div><div class="card-content"><span class="card-title">';
+                    str += x.name+'</span>';    
+                    str += '<p>'+x.description+'</p>';
+                    str += '</div><div class="card-action"><a href="'+x.html_url+'">View on Github</a>';
+                    str += '</div></div></div>';
+                    
+                    // str += '</div">';
+
+                    counter = counter + 1;
+                    $("#repoList").append(str);
+                    // console.log(x);
+                })
+            }
+        });
+    })
+</script>
+</html>
