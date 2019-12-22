@@ -15,16 +15,16 @@
 
         @media only screen and (max-width: 600px) {
         .cards-container {
-            -webkit-column-count: 1;
-            -moz-column-count: 1;
-            column-count: 1;
+            -webkit-column-count: 2;
+            -moz-column-count: 2;
+            column-count: 2;
         }
         }
         @media only screen and (min-width: 601px) {
         .cards-container {
-            -webkit-column-count: 2;
-            -moz-column-count: 2;
-            column-count: 2;
+            -webkit-column-count: 3;
+            -moz-column-count: 3;
+            column-count: 3;
         }
         }
         @media only screen and (min-width: 993px) {
@@ -51,20 +51,21 @@
 </nav>
 <div class="container">
     <div class="row">
-        <div class="col s12 m12">
-            
+        <div class="col s12 m8">
         <table class="striped">
           <br>
             <tbody>
                 <tr><td>Name</td><td id="_name"></td></tr>
                 <tr><td>Bio</td><td id="_bio"></td></tr>
-                <tr><td>Followers</td><td id="_followers"></td></tr>
-                <tr><td>Following</td><td id="_following"></td></tr>
-                <tr><td>Total Repositories</td><td id="_repoCount"></td></tr>
+                <tr><td>Stats</td><td id="_followers"></td></tr>
             </tbody>
           </table>
             <hr>
           <h3>User Repositories</h3>     
+        </div>
+        <div class="col s12 m4">
+            <br>
+            <img id="_userImage" width="100%" src="https://cataas.com/cat/says/your face here">
         </div>
     </div>
 </div>
@@ -89,18 +90,24 @@
                 $("#_headerName").html(res.name);
                 $("#_name").html(res.name);
                 $("#_bio").html(res.bio);
-                $("#_followers").html(res.followers);
-                $("#_following").html(res.following);
-                $("#_repoCount").html(res.public_repos);
-                console.log(res);
+                // $("#_followers").html(res.followers);
+                $("#_followers").html('<img src="https://img.shields.io/badge/Followers-'+res.followers+'-lightgrey" alt="GitHub followers" />&nbsp;')
+                $("#_followers").append('<img src="https://img.shields.io/badge/Following-'+res.following+'-lightgrey" alt="GitHub following" />&nbsp;')
+                $("#_followers").append('<img src="https://img.shields.io/badge/Total Repositories-'+res.public_repos+'-lightgrey" alt="GitHub repositories"></p>');
+                $("#_userImage").attr("src", res.avatar_url);
+                // console.log(res);
             }
         });
+
+        function delay(counter){
+            return " delay-"+((counter%3)+1)+"s ";
+        }
 
         // show repositories
         $.ajax({
             url:"https://api.github.com/users/"+username+"/repos",
             success:(res)=>{
-                console.log(res);
+                // console.log(res);
                 var counter = 1;
                 var rowStart = 0;
                 res.forEach((x)=>{
@@ -113,11 +120,14 @@
                         str += '<div class="col s12 ';
                     str += ['m3','m3'][Math.floor(Math.random()*10)%2];
                     str += '">';
-                    str += '<div class="card"><div class="card-image"><img src="'+'https://cataas.com/cat/says/I worked on '+x.name+'">';
+                    str += '<div class="card animated fadeInUp';
+                    str += delay(counter);
+                    str += '"><div class="card-image"><img src="'+'https://cataas.com/cat/says/I worked on '+x.name+'">';
                     str += '</div><div class="card-content"><span class="card-title">';
                     str += x.name+'</span>';    
                     str += '<p>'+x.description+'</p>';
-                    str += '</div><div class="card-action"><a href="'+x.html_url+'">View on Github</a>';
+                    str += '</div><div class="card-action">';
+                    str += '<a href="'+x.html_url+'">View on Github</a>';
                     str += '</div></div></div>';
                     
                     // str += '</div">';
